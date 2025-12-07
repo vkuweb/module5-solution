@@ -1,11 +1,18 @@
 <div id="home-page">
   <h1>Welcome to My Restaurant</h1>
+
   <div class="tiles">
-    <div class="tile" id="menu-tile"><h3>Menu</h3></div>
-    <div class="tile" id="specials-tile"><h3>Specials</h3>
-      <!-- the onclick uses the placeholder randomCategoryShortName -->
-      <p><a href="#" onclick="$dc.loadMenuItems({{randomCategoryShortName}}); return false;">See Specials</a></p>
+    <div class="tile"><h3>Menu</h3></div>
+
+    <div class="tile">
+      <h3>Specials</h3>
+      <p>
+        <a href="#" onclick="$dc.loadMenuItems({{randomCategoryShortName}}); return false;">
+          See Today's Specials
+        </a>
+      </p>
     </div>
-    <div class="tile" id="map-tile"><h3>Map</h3></div>
+
+    <div class="tile"><h3>Map</h3></div>
   </div>
 </div>
