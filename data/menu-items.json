@@ -1,0 +1,29 @@
+{
+  "L": [
+    { "name": "Chicken Sandwich" },
+    { "name": "Caesar Salad" },
+    { "name": "Tomato Soup" }
+  ],
+
+  "D": [
+    { "name": "Steak" },
+    { "name": "Roasted Vegetables" },
+    { "name": "Mashed Potatoes" }
+  ],
+
+  "SP": [
+    { "name": "Chef Special" },
+    { "name": "Seasonal Dessert" }
+  ],
+
+  "SU": [
+    { "name": "Salmon Nigiri" },
+    { "name": "Tuna Roll" },
+    { "name": "Miso Soup" }
+  ],
+
+  "BR": [
+    { "name": "Pancakes" },
+    { "name": "Avocado Toast" }
+  ]
+}
