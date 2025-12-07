@@ -1,5 +1,7 @@
-(function(global) {
+(function (global) {
+
   var dc = {};
+
   var allCategoriesUrl = "data/categories.json";
   var homeHtmlUrl = "snippets/home-snippet.html";
   var categoryHtmlUrl = "snippets/category-snippet.html";
@@ -8,68 +10,58 @@
   function insertHtml(selector, html) {
     document.querySelector(selector).innerHTML = html;
   }
+
   function insertProperty(template, propName, propValue) {
     var propToReplace = "{{" + propName + "}}";
     return template.replace(new RegExp(propToReplace, "g"), propValue);
   }
 
   function chooseRandomCategory(categories) {
-    var randomIndex = Math.floor(Math.random() * categories.length);
-    var randomShortName = categories[randomIndex].short_name;
-    dc.randomCategoryShortName = "'" + randomShortName + "'";
-    dc.randomCategoryName = categories[randomIndex].name;
-    console.log('Random category selected:', dc.randomCategoryShortName);
+    var index = Math.floor(Math.random() * categories.length);
+    var short = categories[index].short_name;
+
+    dc.randomCategoryShortName = "'" + short + "'";
+    dc.randomCategoryName = categories[index].name;
   }
 
-  dc.loadHomePage = function() {
-    $ajaxUtils.sendGetRequest(allCategoriesUrl, function(categories) {
+  dc.loadHomePage = function () {
+    $ajaxUtils.sendGetRequest(allCategoriesUrl, function (categories) {
+
       chooseRandomCategory(categories);
-      $ajaxUtils.sendGetRequest(homeHtmlUrl, function(homeHtml) {
-        var finalHtml = insertProperty(homeHtml, "randomCategoryShortName", dc.randomCategoryShortName);
-        insertHtml("#main-content", finalHtml);
-        var logo = document.getElementById('logo-link');
-        if (logo) {
-          logo.addEventListener('click', function(e) {
-            e.preventDefault();
-            dc.loadHomePage();
-          });
-        }
+
+      $ajaxUtils.sendGetRequest(homeHtmlUrl, function (html) {
+        html = insertProperty(html, "randomCategoryShortName", dc.randomCategoryShortName);
+        insertHtml("#main-content", html);
       }, false);
-    }, true);
+
+    });
   };
 
-  dc.loadMenuItems = function(categoryShortName) {
-    var shortName = categoryShortName;
-    if (typeof shortName === 'string') {
-      shortName = shortName.replace(/['"]+/g, '');
-    }
-    $ajaxUtils.sendGetRequest(categoryHtmlUrl, function(categoryHtml) {
-      $ajaxUtils.sendGetRequest(menuItemsUrl, function(allItems) {
-        var items = allItems[shortName] || [];
-        var listHtml = '';
-        for (var i=0;i<items.length;i++) {
-          listHtml += '<li>' + items[i].name + '</li>';
-        }
-        var title = shortName;
-        var final = categoryHtml;
-        final = insertProperty(final, 'categoryShortName', shortName);
-        final = insertProperty(final, 'categoryName', title);
-        final = insertProperty(final, 'menuItems', listHtml);
-        insertHtml('#main-content', final);
-        var back = document.getElementById('back-home');
-        if (back) {
-          back.addEventListener('click', function(e) {
-            e.preventDefault();
-            dc.loadHomePage();
-          });
-        }
-      }, true);
+  dc.loadMenuItems = function (shortName) {
+    shortName = shortName.replace(/['"]/g, "");
+
+    $ajaxUtils.sendGetRequest(categoryHtmlUrl, function (html) {
+      $ajaxUtils.sendGetRequest(menuItemsUrl, function (items) {
+
+        var list = "";
+        (items[shortName] || []).forEach(function (item) {
+          list += "<li>" + item.name + "</li>";
+        });
+
+        html = insertProperty(html, "categoryShortName", shortName);
+        html = insertProperty(html, "categoryName", shortName);
+        html = insertProperty(html, "menuItems", list);
+
+        insertHtml("#main-content", html);
+
+      });
     }, false);
   };
 
-  global.$dc = dc;
-  document.addEventListener('DOMContentLoaded', function() {
+  document.addEventListener("DOMContentLoaded", function () {
     dc.loadHomePage();
   });
+
+  global.$dc = dc;
 
 })(window);
