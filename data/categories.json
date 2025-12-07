@@ -1,7 +1,7 @@
-{
-  "L": [ {"name":"Chicken Sandwich"}, {"name":"Caesar Salad"}, {"name":"Tomato Soup"} ],
-  "D": [ {"name":"Steak"}, {"name":"Roasted Vegetables"}, {"name":"Mashed Potatoes"} ],
-  "SP": [ {"name":"Chef's Surprise"}, {"name":"Seasonal Tart"} ],
-  "SU": [ {"name":"Salmon Nigiri"}, {"name":"Tuna Roll"}, {"name":"Miso Soup"} ],
-  "BR": [ {"name":"Pancakes"}, {"name":"Avocado Toast"} ]
-}
+[
+  { "short_name": "L", "name": "Lunch" },
+  { "short_name": "D", "name": "Dinner" },
+  { "short_name": "SP", "name": "Specials" },
+  { "short_name": "SU", "name": "Sushi" },
+  { "short_name": "BR", "name": "Brunch" }
+]
