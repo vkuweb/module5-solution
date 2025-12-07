@@ -1,4 +1,5 @@
 (function (global) {
+
   var dc = {};
 
   var allCategoriesUrl = "data/categories.json";
@@ -18,71 +19,49 @@
   function chooseRandomCategory(categories) {
     var index = Math.floor(Math.random() * categories.length);
     var short = categories[index].short_name;
-    // VERY IMPORTANT: include single quotes so onclick becomes $dc.loadMenuItems('L')
+
     dc.randomCategoryShortName = "'" + short + "'";
     dc.randomCategoryName = categories[index].name;
-    console.log("Random category picked:", dc.randomCategoryShortName);
   }
 
   dc.loadHomePage = function () {
-    // STEP 0: get categories -> choose random -> load home snippet (HTML)
     $ajaxUtils.sendGetRequest(allCategoriesUrl, function (categories) {
-      if (!Array.isArray(categories) || categories.length === 0) {
-        console.error("No categories found at", allCategoriesUrl);
-        return;
-      }
+
       chooseRandomCategory(categories);
 
-      // Load home snippet as TEXT (isJson=false)
-      $ajaxUtils.sendGetRequest(homeHtmlUrl, function (homeHtml) {
-        var finalHtml = insertProperty(homeHtml, "randomCategoryShortName", dc.randomCategoryShortName);
-        insertHtml("#main-content", finalHtml);
-
-        // ensure logo/back works
-        var logo = document.getElementById("logo-link");
-        if (logo) {
-          logo.addEventListener("click", function (e) {
-            e.preventDefault();
-            dc.loadHomePage();
-          });
-        }
+      $ajaxUtils.sendGetRequest(homeHtmlUrl, function (html) {
+        html = insertProperty(html, "randomCategoryShortName", dc.randomCategoryShortName);
+        insertHtml("#main-content", html);
       }, false);
-    }, true);
+
+    });
   };
 
-  dc.loadMenuItems = function (categoryShortName) {
-    // remove surrounding quotes
-    var shortName = ("" + categoryShortName).replace(/['"]/g, "");
-    // load category template (HTML)
-    $ajaxUtils.sendGetRequest(categoryHtmlUrl, function (categoryHtml) {
-      // load menu items (JSON)
-      $ajaxUtils.sendGetRequest(menuItemsUrl, function (allItems) {
-        var items = allItems[shortName] || [];
-        var listHtml = "";
-        for (var i = 0; i < items.length; i++) {
-          listHtml += "<li>" + items[i].name + "</li>";
-        }
-        var final = categoryHtml;
-        final = insertProperty(final, "categoryShortName", shortName);
-        final = insertProperty(final, "categoryName", shortName);
-        final = insertProperty(final, "menuItems", listHtml);
-        insertHtml("#main-content", final);
+  dc.loadMenuItems = function (shortName) {
+    shortName = shortName.replace(/['"]/g, "");
 
-        var back = document.getElementById("back-home");
-        if (back) {
-          back.addEventListener("click", function (e) {
-            e.preventDefault();
-            dc.loadHomePage();
-          });
-        }
-      }, true);
+    $ajaxUtils.sendGetRequest(categoryHtmlUrl, function (html) {
+      $ajaxUtils.sendGetRequest(menuItemsUrl, function (items) {
+
+        var list = "";
+        (items[shortName] || []).forEach(function (item) {
+          list += "<li>" + item.name + "</li>";
+        });
+
+        html = insertProperty(html, "categoryShortName", shortName);
+        html = insertProperty(html, "categoryName", shortName);
+        html = insertProperty(html, "menuItems", list);
+
+        insertHtml("#main-content", html);
+
+      });
     }, false);
   };
 
-  // expose and auto-load
-  global.$dc = dc;
   document.addEventListener("DOMContentLoaded", function () {
     dc.loadHomePage();
   });
+
+  global.$dc = dc;
 
 })(window);
