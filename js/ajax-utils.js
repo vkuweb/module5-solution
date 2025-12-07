@@ -3,33 +3,27 @@
 
   function getRequestObject() {
     if (window.XMLHttpRequest) {
-      return (new XMLHttpRequest());
-    } else if (window.ActiveXObject) {
-      return (new ActiveXObject("Microsoft.XMLHTTP"));
-    } else {
-      window.alert("Ajax not supported");
+      return new XMLHttpRequest();
+    }
+    else {
+      alert("AJAX not supported");
       return null;
     }
   }
 
-  ajaxUtils.sendGetRequest = function (requestUrl, responseHandler, isJsonResponse) {
+  ajaxUtils.sendGetRequest = function (requestUrl, responseHandler, isJson) {
     var request = getRequestObject();
+
     request.onreadystatechange = function () {
-      if (request.readyState === 4) {
-        if (request.status === 200) {
-          if (isJsonResponse === undefined) {
-            isJsonResponse = true;
-          }
-          if (isJsonResponse) {
-            responseHandler(JSON.parse(request.responseText));
-          } else {
-            responseHandler(request.responseText);
-          }
-        } else {
-          console.error("Request error", request.status, request.statusText, request.responseURL);
+      if ((this.readyState == 4) && (this.status == 200)) {
+        if (isJson == undefined) {
+          isJson = true;
         }
+
+        responseHandler(isJson ? JSON.parse(this.responseText) : this.responseText);
       }
     };
+
     request.open("GET", requestUrl, true);
     request.send(null);
   };
